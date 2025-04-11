@@ -100,17 +100,31 @@ def generate_chart(submit_clicks, retry_clicks, prompt):
                         "You are a Python developer tasked with generating only Plotly Express code for clinical data in the OMOP Common Data Model format. "
                         "The data is pre-loaded in pandas DataFrames named: 'person', 'death', 'visit_occurrence', 'concept', 'condition_occurrence', and 'location'. "
                         "Do NOT use pd.read_csv or attempt to load data from files; use the existing DataFrames directly. "
-                        "Table relationships: person and death join on person_id, person and visit_occurrence join on person_id, "
-                        "condition_occurrence joins to person on person_id and to concept on condition_concept_id, "
-                        "visit_occurrence has care_site_id (not location_id) which does not directly join to location.location_id, "
-                        "location has columns: location_id, address_1, address_2, city, state, zip, county, location_source_value (no latitude/longitude). "
-                        "Your response must contain ONLY the Python code with no explanations, comments, or additional text. "
-                        "Do not include backticks, markdown, or any other formatting. "
-                        "The code should include all necessary data manipulations (e.g., joins, filters) using pandas, REAL data from the DataFrames, python imports, and variable assignments. "
-                        "When converting dates with pd.to_datetime, use utc=False to ensure tz-naive datetimes, or use .dt.tz_localize(None) to strip timezone info before subtraction. "
-                        "If a requested column (e.g., location_id, latitude) is missing, use an alternative (e.g., state, zip) or plot an empty chart with 'No data found' in the title. "
-                        "ALWAYS give the date or dates of the data in the title if applicable. Use pd.to_datetime for date conversions if needed."
+
+                        "Table relationships:\n"
+                        "- person joins to death on person_id\n"
+                        "- person joins to visit_occurrence on person_id\n"
+                        "- person joins to condition_occurrence on person_id\n"
+                        "- condition_occurrence joins to concept on condition_concept_id\n"
+                        "- visit_occurrence joins to concept on visit_concept_id\n"
+                        "- condition_occurrence joins to visit_occurrence on visit_occurrence_id\n"
+
+                        "Concept table is used to decode concept_id fields into concept_name values.\n"
+
+                        "Column caveats:\n"
+                        "- location has: location_id, address_1, address_2, city, state, zip, county, location_source_value\n"
+                        "- location does NOT have latitude or longitude.\n"
+                        "- visit_occurrence has care_site_id, but care_site is not available; skip joins to it.\n"
+                        "- Some columns like location_id, latitude may be missing — use alternatives like state, zip, or plot empty chart if needed.\n"
+
+                        "Your response must contain ONLY the Python code — no explanations, no markdown, no comments.\n"
+                        "Always include required imports (e.g., import plotly.express as px, import pandas as pd).\n"
+                        # "Assign the final chart to a variable named 'fig'. Do NOT use fig.show() or display().\n"
+                        "Always include the data date or range in the chart title if dates are involved.\n"
+                        "When converting dates, use pd.to_datetime(..., utc=False) or .dt.tz_localize(None) to remove timezones.\n"
+                        "If no rows match the query after filtering, return an empty chart like px.bar(title='No data found')."
                     )
+
                 },
                 {
                     "role": "user",
@@ -147,7 +161,7 @@ def generate_chart(submit_clicks, retry_clicks, prompt):
         ]
         code = '\n'.join(code_lines)
 
-        print("Generated code:\n", code)
+        # print("Generated code:\n", code)
 
         # Ensure there's still some code left
         if not code:
