@@ -1,7 +1,7 @@
 
 # 🏥 Clinical Chart Builder
 
-The **Clinical Chart Builder** is a Python-based web app that lets users generate interactive charts from OMOP CDM-formatted clinical data using natural language. It uses GPT-4o (via Azure OpenAI) to interpret user prompts and generate Python/Plotly code to create relevant visualizations.
+The **Clinical Chart Builder** is a Python-based web app that lets users generate interactive charts from OMOP (Observational Medical Outcomes Partnership) CDM-formatted clinical data using natural language. It uses GPT-4o (via Azure OpenAI) to interpret user prompts and generate Python/Plotly code to create relevant visualizations.
 
 This is built to prototype AI-assisted charting for clinical data teams using the OMOP CDM (Common Data Model).
 
